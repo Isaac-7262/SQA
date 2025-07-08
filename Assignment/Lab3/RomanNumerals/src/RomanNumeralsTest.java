@@ -7,12 +7,15 @@ public class RomanNumeralsTest {
 
  // --- Positive Test Scenarios ---
 
+    //ข้อ 1
     @Test
     void testSingleDigit() { 
         assertEquals(1, converter.convertRomanNumToInt("I"), "I should convert to 1");
         assertEquals(5, converter.convertRomanNumToInt("V"), "V should convert to 5");
     }
 
+    
+    //ข้อ2
     @Test
     void testTwoDigitsFirstSmallerThanSecond() {
         // กรณีการลบ
@@ -20,6 +23,8 @@ public class RomanNumeralsTest {
         assertEquals(9, converter.convertRomanNumToInt("IX"), "IX should convert to 9 (10-1)");   
     }
 
+    
+    //ข้อ3
     @Test
     void testTwoDigitsFirstLargerThanSecond() {
         // กรณีการบวก
@@ -27,22 +32,29 @@ public class RomanNumeralsTest {
         assertEquals(101, converter.convertRomanNumToInt("CI"), "CI should convert to 101 (100+1)");
     }
 
+    
+    //ข้อ4
     @Test
     void testTwoDigitsSameNumber() {
         assertEquals(20, converter.convertRomanNumToInt("XX"), "XX should convert to 20");
     }
-
+    
+    
+    //ข้อ5
     @Test
     void testMultipleDigitsSameNumber() {
         assertEquals(30, converter.convertRomanNumToInt("XXX"), "XXX should convert to 30");
     }
+    
 
   //ข้อ 6
     @Test
     void testMultipleDigitsFirstLargerThanRest() {
         assertEquals(26, converter.convertRomanNumToInt("XXVI"), "XXVI should convert to 26");
     }
-
+    
+    
+    //ข้้อ7
     @Test
     void testMultipleDigitsComplexCombinations() {
         assertEquals(74, converter.convertRomanNumToInt("LXXIV"), "LXXIV should convert to 74");
@@ -50,7 +62,7 @@ public class RomanNumeralsTest {
 
     // --- Negative Test Scenarios ---
 
-
+    //ข้อ8
     @Test
     void testInvalidCharacter() {
         // 1) Not a roman numeral number เช่น J, K
@@ -67,6 +79,7 @@ public class RomanNumeralsTest {
             converter.convertRomanNumToInt("ROMAN"); // มีตัวอักษรที่ไม่ถูกต้อง
         }, "Should throw NullPointerException for string with invalid characters (e.g., 'R', 'O', 'N')");
     }
+    	
     
     //ข้อ 9
     @Test
@@ -74,6 +87,7 @@ public class RomanNumeralsTest {
         // V, L, D ห้ามซ้ำ
         assertEquals(10, converter.convertRomanNumToInt("VV"), "VV should convert to 10 (current implementation)");
     }
+    
 
     //ข้อ 10
     @Test
