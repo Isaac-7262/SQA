@@ -31,9 +31,9 @@ public class RomanNumerals {
 		{	int currentNumber = map.get(romanNumber.charAt(i));		//map current character to number
 			int nextNumber = i+1 < inputLength ? map.get(romanNumber.charAt(i+1)) : 0;	//get the adjacent character
 			
-			if (currentNumber > nextNumber) 
-			{	convertedNumber += currentNumber;
-				
+			if (currentNumber > nextNumber)       
+			{	convertedNumber += currentNumber; 
+			
 			} else {
 				convertedNumber -= currentNumber;
 			}
