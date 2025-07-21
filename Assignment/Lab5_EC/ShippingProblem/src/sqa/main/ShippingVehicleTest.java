@@ -1,71 +1,60 @@
 package sqa.main;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
-class ShippingVehicleTest {
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
-	@ParameterizedTest
-	@CsvSource({
-	    // Valid boundaries (min, mid, max for each)
-	    "0,0,0,0",         // all min
-	    "0,0,100,100",     // large max
-	    "0,100,0,0",       // medium mid
-	    "0,200,0,0",       // medium max
-	    "0,0,1,1",         // large min+1
-	    "0,1,0,0",         // medium min+1
-	    "1,0,0,0",         // small min+1
-	    "500,0,0,0",       // small max
-	    "0,200,100,100",   // medium max, large max
-	    "500,200,100,100", // all max
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-	    // Valid mixed
-	    "1,1,1,1",
-	    "250,100,50,50",   // mid values, under weight
-	    "499,0,0,0",       // small just under max
+public class ShippingVehicleTest {
 
-	    // Over weight
-	    "100,100,80,-1",   // over weight
-	    "500,200,100,-1",  // all max, over weight
+    static Stream<org.junit.jupiter.params.provider.Arguments> shippingTestCases() {
+        return Stream.of(
+        		// Valid boundaries
+                arguments(0, 0, 0, Arrays.asList(0, 0, 0)),
+                arguments(1, 0, 0, Arrays.asList(0, 0, 1)),
+                arguments(499, 0, 0, Arrays.asList(0, 0, 499)),
+                arguments(500, 0, 0, Arrays.asList(0, 0, 500)),
+                arguments(0, 1, 0, Arrays.asList(0, 1, 0)),
+                arguments(0, 199, 0, Arrays.asList(0, 199, 0)),
+                arguments(0, 200, 0, Arrays.asList(0, 200, 0)),
+                arguments(0, 0, 1, Arrays.asList(1, 0, 0)),
+                arguments(0, 0, 99, Arrays.asList(99, 0, 0)),
+                arguments(0, 0, 100, Arrays.asList(100, 0, 0)),
+                // Invalid boundaries
+                
+                arguments(501, 0, 0, Arrays.asList(-1)),
+                arguments(0, 201, 0, Arrays.asList(-1)),
+                arguments(0, 0, 101, Arrays.asList(-1)),
+                
+                // Combinations at boundaries
+                arguments(500, 200, 100, Arrays.asList(-1)), // All max, sum over
+                arguments(499, 199, 99, Arrays.asList(-1)), // All just under max
+                arguments(1, 1, 1, Arrays.asList(1, 1, 1)), // All just above min
+                arguments(0, 200, 100, Arrays.asList(-1)), // Medium and Large at max, sum over
+                arguments(500, 0, 100, Arrays.asList(-1)), // Small and Large at max, sum over
+                arguments(500, 200, 0, Arrays.asList(-1)), // Small and Medium at max, sum over
+                arguments(0, 199, 100, Arrays.asList(-1)), // Medium just under, Large at max
+                arguments(499, 200, 0, Arrays.asList(-1)), // Small just under, Medium at max, sum over
+                arguments(500, 199, 0, Arrays.asList(-1)), // Small at max, Medium just under, sum over
+                arguments(0, 0, 100, Arrays.asList(100, 0, 0)), // Large at max
+                arguments(0, 200, 0, Arrays.asList(0, 200, 0)), // Medium at max
+                arguments(500, 0, 0, Arrays.asList(0, 0, 500)), // Small at max
+                // Invalid combinations                          
+                arguments(300, 100, 30, Arrays.asList(-1)), // All below min
+                arguments(501, 201, 101, Arrays.asList(-1)) // All above max
+        );
+    }
 
-	    // Each just over max (invalid)
-	    "501,0,0,-1",
-	    "0,201,0,-1",
-	    "0,0,101,-1",
-
-	    // Each negative (invalid)
-	    "-1,0,0,-1",
-	    "0,-1,0,-1g",
-	    "0,0,-1,-1",
-
-	    // All negative
-	    "-1,-1,-1,-1",
-
-	    // All over max
-	    "501,201,101,-1",
-
-	    // Mixed invalids
-	    "501,1,1,-1",
-	    "1,201,1,-1",
-	    "1,1,101,-1",
-
-	    // Edge: valid but total weight just below limit
-	    "0,199,0,199"      // 0+995+0=995 < 1000
-	    
-	})
-	void testCalculate_CategoryPartition(int smallSize, int mediumSize, int largeSize, int expectedFirst) {
-	    ShippingVehicle vehicle = new ShippingVehicle();
-	    List<Integer> result = vehicle.calculate(smallSize, mediumSize, largeSize);
-	    assertEquals(expectedFirst, result.get(0));
-	    
-
-	}
-	
-
-	
-
+    @ParameterizedTest
+    @MethodSource("shippingTestCases")
+    void testCalculate(int smallSize, int mediumSize, int largeSize, List<Integer> expected) {
+        ShippingVehicle vehicle = new ShippingVehicle();
+        List<Integer> result = vehicle.calculate(smallSize, mediumSize, largeSize);
+        assertEquals(expected, result);
+    }
 }
